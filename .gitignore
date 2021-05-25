@@ -73,6 +73,9 @@ crashlytics-build.properties
 # Apple
 .DS_Store
 
-# User Provider
+# User Provided
 /[Aa]ssets/ImageDeformer/Models/
 /[Aa]ssets/ImageDeformer/Textures/
+
+# Python Env
+venv/
