@@ -7,6 +7,7 @@ public class ScenePreparation : MonoBehaviour
 {
     public Transform parentForCreatedObjects;
     public BoxCollider visibleRegion;
+    public UnityEngine.Rendering.VolumeProfile volumeProfile;
     public bool modifyMaterialColor = true;
 
     private string[] assetPaths;
@@ -69,6 +70,25 @@ public class ScenePreparation : MonoBehaviour
             // meshRenderer.material = material;
             MeshCollider collider = meshRenderer.gameObject.AddComponent<MeshCollider>();
             collider.convex = true;
+        }
+    }
+
+    public Material testMaterial;
+    public void SetMaterial()
+    {
+        string[] assets = AssetDatabase.FindAssets("", new[] {"Assets/ImageDeformer/Textures/Flooring/WoodFloor001_4K-JPG"});
+        for (int i = 0; i < assets.Length; ++i)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(assets[i]);
+            Texture texture = (Texture) AssetDatabase.LoadAssetAtPath<Texture>(path);
+            if (path.Contains("Color"))
+                testMaterial.SetTexture("_Color", texture);
+            else if (path.Contains("Normal"))
+                testMaterial.SetTexture("_BumpMap", texture);
+            else if (path.Contains("Roughness"))
+                testMaterial.SetTexture("_Glossiness", texture);
+            else if (path.Contains("Occlusion"))
+                testMaterial.SetTexture("_OcclusionMap", texture);
         }
     }
 

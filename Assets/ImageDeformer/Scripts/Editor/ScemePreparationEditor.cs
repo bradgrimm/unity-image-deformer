@@ -18,5 +18,10 @@ public class ScemePreparationEditor : Editor
         {
             (target as ScenePreparation).GenerateScene();
         }
+
+        if (GUILayout.Button("Set Material"))
+        {
+            (target as ScenePreparation).SetMaterial();
+        }
     }
 }
