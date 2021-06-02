@@ -16,6 +16,7 @@ public class ScenePreparation : MonoBehaviour
     private string[] assetPaths;
     private float objScale = 1.0f;
     private Transform lookAt;
+    private Randomizer[] randomizers = new Randomizer[0];
 
     void Start()
     {
@@ -42,9 +43,11 @@ public class ScenePreparation : MonoBehaviour
 
     public void GenerateScene()
     {
-        Debug.Log("Randomizing new scene.");
-        CreateModel();
-        RandomizeCamera();
+        if (randomizers.Length == 0)
+            randomizers = GameObject.FindObjectsOfType<Randomizer>();
+        //CreateModel();
+        //RandomizeCamera();
+        RandomizeEverything();
     }
 
     public void CreateModel()
@@ -122,6 +125,14 @@ public class ScenePreparation : MonoBehaviour
         }
     }
 
+    public void RandomizeEverything()
+    {
+        foreach (Randomizer randomizer in randomizers)
+        {
+            randomizer.Randomize();
+        }
+    }
+
     public void RandomizeCamera()
     {
         PickRandomObjectToLookAt();
@@ -150,14 +161,4 @@ public class ScenePreparation : MonoBehaviour
             Random.Range(bounds.min.z, bounds.max.z)
         );
     }
-
-    public static void FindDirectoryAssets()
-    {
-        string[] guids = AssetDatabase.FindAssets("", new[] {"Assets/ImageDeformer/Textures/Flooring"});
-        foreach (string guid in guids)
-        {
-
-        }
-    }
-
 }
