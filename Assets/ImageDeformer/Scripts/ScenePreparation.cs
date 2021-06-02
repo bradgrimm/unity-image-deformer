@@ -9,13 +9,17 @@ public class ScenePreparation : MonoBehaviour
     public BoxCollider visibleRegion;
     public UnityEngine.Rendering.VolumeProfile volumeProfile;
     public bool modifyMaterialColor = true;
+    public Material[] randomizeMaterials;
+    public Vector2 yRange = new Vector2(1.0f, 3.0f);
+    public Vector2 xzRange = new Vector2(1.0f, 3.0f);
 
     private string[] assetPaths;
-    private float objScale = 1 / 63.3f;
+    private float objScale = 1.0f;
+    private Transform lookAt;
 
     void Start()
     {
-        string[] assetGuids = AssetDatabase.FindAssets("", new[] {"Assets/ImageDeformer/Models"});
+        string[] assetGuids = AssetDatabase.FindAssets("", new[] {"Assets/ImageDeformer/Models/First30"});
         assetPaths = new string[assetGuids.Length];
         for (int i = 0; i < assetGuids.Length; ++i)
         {
@@ -23,17 +27,31 @@ public class ScenePreparation : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        if (lookAt == null)
+        {
+            PickRandomObjectToLookAt();
+        }
+
+        if (lookAt != null)
+        {
+            Camera.main.transform.LookAt(lookAt);
+        }
+    }
+
     public void GenerateScene()
     {
         Debug.Log("Randomizing new scene.");
         CreateModel();
+        RandomizeCamera();
     }
 
     public void CreateModel()
     {
-        //int idx = Random.Range (0, assetPaths.Length);
-        //string assetPath = assetPaths[idx];
-        string assetPath = "Assets/ImageDeformer/Models/3001.obj";
+        int idx = Random.Range (0, assetPaths.Length - 1);
+        string assetPath = assetPaths[idx];
+        //string assetPath = "Assets/ImageDeformer/Models/3001.obj";
         GameObject model = (GameObject) AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
         model.transform.localScale = new Vector3(objScale, objScale, objScale);
         Vector3 startPoint = RandomPointInBounds(visibleRegion.bounds);
@@ -42,9 +60,7 @@ public class ScenePreparation : MonoBehaviour
         // Create object color.
         if (modifyMaterialColor)
         {
-            // bool isHDRP = GraphicsSettings.renderPipelineAsset != null;
-            // string shaderName = isHDRP ? "HDRP/Lit" : "Standard";
-            string shaderName = "Standard";
+            string shaderName = "HDRP/Lit";
             Material material = new Material(Shader.Find(shaderName));
             Color matColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
             // material.SetFloat("_Smoothness", 0.9f);
@@ -73,38 +89,75 @@ public class ScenePreparation : MonoBehaviour
         }
     }
 
-    public Material testMaterial;
     public void SetMaterial()
     {
-        string[] assets = AssetDatabase.FindAssets("", new[] {"Assets/ImageDeformer/Textures/Flooring/WoodFloor001_4K-JPG"});
-        for (int i = 0; i < assets.Length; ++i)
+        foreach (Material material in randomizeMaterials)
         {
-            string path = AssetDatabase.GUIDToAssetPath(assets[i]);
-            Texture texture = (Texture) AssetDatabase.LoadAssetAtPath<Texture>(path);
-            if (path.Contains("Color"))
-                testMaterial.SetTexture("_Color", texture);
-            else if (path.Contains("Normal"))
-                testMaterial.SetTexture("_BumpMap", texture);
-            else if (path.Contains("Roughness"))
-                testMaterial.SetTexture("_Glossiness", texture);
-            else if (path.Contains("Occlusion"))
-                testMaterial.SetTexture("_OcclusionMap", texture);
+            // Clear old textures
+            material.SetTexture("_BaseColorMap", null);
+            material.SetTexture("_NormalMap", null);
+            material.SetTexture("_HeightMap", null);
+            material.SetTexture("_MaskMap", null);
+            material.SetTexture("_EmissiveColorMap", null);
+
+            // Randomly pick new one.
+            string[] paths = AssetDatabase.GetSubFolders("Assets/ImageDeformer/Textures/Flooring");
+            int idx = Random.Range (0, paths.Length - 1);
+            string[] assets = AssetDatabase.FindAssets("", new[] {paths[idx]});
+            for (int i = 0; i < assets.Length; ++i)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(assets[i]);
+                Texture texture = (Texture) AssetDatabase.LoadAssetAtPath<Texture>(path);
+                if (path.Contains("Color"))
+                    material.SetTexture("_BaseColorMap", texture);
+                else if (path.Contains("Normal"))
+                    material.SetTexture("_NormalMap", texture);
+                else if (path.Contains("Displacement"))
+                    material.SetTexture("_HeightMap", texture);
+                else if (path.Contains("MASK"))
+                    material.SetTexture("_MaskMap", texture);
+                else if (path.Contains("_emi"))
+                    material.SetTexture("_EmissiveColorMap", texture);
+            }
         }
+    }
+
+    public void RandomizeCamera()
+    {
+        PickRandomObjectToLookAt();
+        Vector2 xzRandom = Random.insideUnitCircle;
+        Vector3 cameraPosition = lookAt.position;
+        cameraPosition.y += Random.Range(yRange.x, yRange.y);
+        cameraPosition.x += xzRandom.x;
+        cameraPosition.z += xzRandom.y;
+        Camera.main.transform.position = cameraPosition;
+    }
+
+    public void PickRandomObjectToLookAt()
+    {
+        int childCount = parentForCreatedObjects.childCount;
+        Transform child = childCount > 1
+            ? parentForCreatedObjects.transform.GetChild(Random.Range(0, childCount))
+            : parentForCreatedObjects;
+        lookAt = child;
     }
 
     public static Vector3 RandomPointInBounds(Bounds bounds)
     {
-        float ex = bounds.extents.x;
-        float ez = bounds.extents.z;
-        float xPos = Random.Range(-ex, ex);
-        float xNeg = -Random.Range(-ex, ex);
-        float zPos = Random.Range(-ez, ez);
-        float zNeg = Random.Range(-ez, ez);
         return new Vector3(
-            Random.Range(bounds.min.x + xNeg, bounds.max.x + xPos),
+            Random.Range(bounds.min.x, bounds.max.x),
             Random.Range(bounds.min.y, bounds.max.y),
             Random.Range(bounds.min.z, bounds.max.z)
         );
+    }
+
+    public static void FindDirectoryAssets()
+    {
+        string[] guids = AssetDatabase.FindAssets("", new[] {"Assets/ImageDeformer/Textures/Flooring"});
+        foreach (string guid in guids)
+        {
+
+        }
     }
 
 }

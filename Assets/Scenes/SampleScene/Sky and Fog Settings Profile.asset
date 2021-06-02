@@ -39,7 +39,7 @@ MonoBehaviour:
   m_AdvancedMode: 0
   mode:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0
   meteringMode:
     m_OverrideState: 0
     m_Value: 2
@@ -48,9 +48,9 @@ MonoBehaviour:
     m_Value: 1
   fixedExposure:
     m_OverrideState: 1
-    m_Value: 4.5207376
+    m_Value: 0.38170016
   compensation:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 1
   limitMin:
     m_OverrideState: 0
@@ -211,7 +211,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d877ec3e844f2ca46830012e8e79319b, type: 3}
   m_Name: PhysicallyBasedSky
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   m_AdvancedMode: 0
   rotation:
     m_OverrideState: 0
@@ -398,11 +398,11 @@ MonoBehaviour:
     m_Value: 1
   threshold:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 95
     min: 0
   intensity:
     m_OverrideState: 1
-    m_Value: 0.751
+    m_Value: 0.191
     min: 0
     max: 1
   scatter:
@@ -495,7 +495,7 @@ MonoBehaviour:
     m_Value: 50
   meanFreePath:
     m_OverrideState: 1
-    m_Value: 100
+    m_Value: 10
     min: 1
   enableVolumetricFog:
     m_OverrideState: 1
@@ -573,10 +573,10 @@ MonoBehaviour:
   m_AdvancedMode: 0
   type:
     m_OverrideState: 1
-    m_Value: 4
+    m_Value: 9
   intensity:
     m_OverrideState: 1
-    m_Value: 0.542
+    m_Value: 0.82
     min: 0
     max: 1
   response:

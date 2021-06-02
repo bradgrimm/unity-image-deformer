@@ -60,8 +60,57 @@ public class MaskMaker : EditorWindow {
             GUILayout.BeginVertical();
             scrollPos = GUILayout.BeginScrollView(scrollPos, false, true, GUILayout.ExpandHeight(true));
         }
-            
 
+        if(GUILayout.Button("Auto Generate"))
+        {
+            string[] folderGuids = AssetDatabase.FindAssets("", new[] {"Assets/ImageDeformer/Textures/Flooring"});
+            for (int k = 0; k < folderGuids.Length; ++k)
+            {
+                string folderPath = AssetDatabase.GUIDToAssetPath(folderGuids[k]);
+                if (!folderPath.Contains("."))
+                {
+                    // Clear previous mask.
+                    Albedo = null;
+                    Normal = null;
+                    Smooth_Rough = null;
+                    Metallic = null;
+                    AmbientOcclusion = null;
+                    DetailMask = null;
+
+                    // Find new masks by name.
+                    string[] assetGuids = AssetDatabase.FindAssets("", new[] {folderPath});
+                    for (int i = 0; i < assetGuids.Length; ++i)
+                    {
+
+                        string path = AssetDatabase.GUIDToAssetPath(assetGuids[i]);
+                        Texture2D texture = (Texture2D) AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+                        if (path.Contains("_Color"))
+                            Albedo = texture;
+                        else if (path.Contains("_Normal"))
+                            Normal = texture;
+                        else if (path.Contains("_Roughness"))
+                        {
+                            useRough = true;
+                            Smooth_Rough = texture;
+                        }
+                        else if (path.Contains("_Metal"))
+                            Metallic = texture;
+                        else if (path.Contains("Occlusion"))
+                            AmbientOcclusion = texture;
+                        else if (path.Contains("Detail"))
+                            DetailMask = texture;
+                    }
+
+                    // Save mask texture.
+                    string[] parts = folderPath.Split('/');
+                    string name = parts[parts.Length - 1];
+                    string outPath = folderPath + "/" + name.Replace("-JPG", "") + "_MASK.png";
+                    PackTextures(outPath);
+                }
+            }
+
+
+        }
 
         GUIStyle BigBold = new GUIStyle();
         BigBold.fontSize = 16;
@@ -103,7 +152,7 @@ public class MaskMaker : EditorWindow {
             texSize = new Vector2Int(Metallic.width, Metallic.height);
         if (Metallic && texSize != new Vector2Int(Metallic.width, Metallic.height))
             Metallic = null;
-        
+
         GUILayout.Space(10f);
         GUILayout.EndVertical();
 
@@ -250,9 +299,9 @@ public class MaskMaker : EditorWindow {
             GUILayout.Space(10f);
             GUILayout.EndVertical();
         }
-        
+
         GUILayout.Label("Output texture will be the same height and width as input", Wrap);
-        
+
         GUILayout.Space(100);
         if (window)
         {
@@ -317,11 +366,13 @@ public class MaskMaker : EditorWindow {
         EditorUtility.ClearProgressBar();
     }
 
-    private void PackTextures()
+    private void PackTextures(string path=null)
     {
         UpdateTexture(false);
-        
-        var path = EditorUtility.SaveFilePanelInProject("Save Texture To Diectory", "LitMask", "png", "Saved");
+
+        Debug.Log(path);
+        if (path == null)
+            path = EditorUtility.SaveFilePanelInProject("Save Texture To Diectory", "LitMask", "png", "Saved");
         var pngData = finalTexture.EncodeToPNG();
         if (path.Length != 0)
         {
@@ -331,7 +382,7 @@ public class MaskMaker : EditorWindow {
             }
         }
         AssetDatabase.Refresh();
-       
+
         Debug.Log("Texture Saved to: " + path);
     }
 
