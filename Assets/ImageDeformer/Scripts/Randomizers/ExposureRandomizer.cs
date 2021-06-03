@@ -5,7 +5,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 
 [RequireComponent(typeof(Volume))]
-public class RandomizeExposure : Randomizer
+public class ExposureRandomizer : Randomizer
 {
     public Vector2 exposureRange = new Vector2(-1.0f, 6.0f);
     private Volume globalVolume;

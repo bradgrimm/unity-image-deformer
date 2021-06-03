@@ -43,8 +43,8 @@ public class ScenePreparation : MonoBehaviour
 
     public void GenerateScene()
     {
-        if (randomizers.Length == 0)
-            randomizers = GameObject.FindObjectsOfType<Randomizer>();
+        //if (randomizers.Length == 0)
+        randomizers = GameObject.FindObjectsOfType<Randomizer>();
         //CreateModel();
         //RandomizeCamera();
         RandomizeEverything();
