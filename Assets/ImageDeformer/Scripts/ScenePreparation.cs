@@ -10,48 +10,55 @@ public class ScenePreparation : MonoBehaviour
     public UnityEngine.Rendering.VolumeProfile volumeProfile;
     public bool modifyMaterialColor = true;
     public Material[] randomizeMaterials;
-    public Vector2 yRange = new Vector2(1.0f, 3.0f);
-    public Vector2 xzRange = new Vector2(1.0f, 3.0f);
 
-    private string[] assetPaths;
+    private string[] assetPaths = new string[0];
     private float objScale = 1.0f;
-    private Transform lookAt;
     private Randomizer[] randomizers = new Randomizer[0];
 
     void Start()
     {
-        string[] assetGuids = AssetDatabase.FindAssets("", new[] {"Assets/ImageDeformer/Models/First30"});
-        assetPaths = new string[assetGuids.Length];
-        for (int i = 0; i < assetGuids.Length; ++i)
+        InitAssetPaths();
+        InitRandomizers();
+    }
+
+    void InitAssetPaths()
+    {
+        if (assetPaths.Length == 0)
         {
-            assetPaths[i] = AssetDatabase.GUIDToAssetPath(assetGuids[i]);
+            string[] assetGuids = AssetDatabase.FindAssets("", new[] {"Assets/ImageDeformer/Models/First30"});
+            assetPaths = new string[assetGuids.Length];
+            for (int i = 0; i < assetGuids.Length; ++i)
+                assetPaths[i] = AssetDatabase.GUIDToAssetPath(assetGuids[i]);
         }
     }
 
-    void Update()
+    void InitRandomizers()
     {
-        if (lookAt == null)
-        {
-            PickRandomObjectToLookAt();
-        }
-
-        if (lookAt != null)
-        {
-            Camera.main.transform.LookAt(lookAt);
-        }
+        //if (randomizers.Length == 0)
+        //{
+        randomizers = Resources.FindObjectsOfTypeAll<Randomizer>();
+        //}
     }
 
     public void GenerateScene()
     {
-        //if (randomizers.Length == 0)
-        randomizers = GameObject.FindObjectsOfType<Randomizer>();
+        InitRandomizers();
         //CreateModel();
-        //RandomizeCamera();
         RandomizeEverything();
     }
 
-    public void CreateModel()
+    public void CreateModels()
     {
+        for (int i = 0; i < 1000; ++i)
+        {
+            CreateSingleModel();
+        }
+    }
+
+    public void CreateSingleModel()
+    {
+        InitAssetPaths();
+
         int idx = Random.Range (0, assetPaths.Length - 1);
         string assetPath = assetPaths[idx];
         //string assetPath = "Assets/ImageDeformer/Models/3001.obj";
@@ -129,28 +136,14 @@ public class ScenePreparation : MonoBehaviour
     {
         foreach (Randomizer randomizer in randomizers)
         {
-            randomizer.Randomize();
+            bool enabled = randomizer.triggerEnabled;
+            float c = randomizer.triggerChance;
+            float v = Random.Range(0.0f, 1.0f);
+            if (enabled && c != 0.0f && v <= c)
+                randomizer.Randomize();
+            else
+                randomizer.Default();
         }
-    }
-
-    public void RandomizeCamera()
-    {
-        PickRandomObjectToLookAt();
-        Vector2 xzRandom = Random.insideUnitCircle;
-        Vector3 cameraPosition = lookAt.position;
-        cameraPosition.y += Random.Range(yRange.x, yRange.y);
-        cameraPosition.x += xzRandom.x;
-        cameraPosition.z += xzRandom.y;
-        Camera.main.transform.position = cameraPosition;
-    }
-
-    public void PickRandomObjectToLookAt()
-    {
-        int childCount = parentForCreatedObjects.childCount;
-        Transform child = childCount > 1
-            ? parentForCreatedObjects.transform.GetChild(Random.Range(0, childCount))
-            : parentForCreatedObjects;
-        lookAt = child;
     }
 
     public static Vector3 RandomPointInBounds(Bounds bounds)

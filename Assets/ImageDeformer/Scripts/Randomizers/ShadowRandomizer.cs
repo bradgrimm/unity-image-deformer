@@ -6,6 +6,8 @@ public class ShadowRandomizer : Randomizer
 {
     public override void Randomize()
     {
-        
+
     }
+
+    public override void Default() {}
 }

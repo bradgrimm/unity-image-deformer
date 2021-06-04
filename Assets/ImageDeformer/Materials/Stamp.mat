@@ -45,7 +45,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseColorMap:
-        m_Texture: {fileID: 2800000, guid: 1c2ee0c01c0aa46a6a830bcbab1a7a34, type: 3}
+        m_Texture: {fileID: 2800000, guid: 7e0a9e094e6424eb7b490762228b6ad8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BentNormalMap:
@@ -160,12 +160,12 @@ Material:
     - _CullMode: 2
     - _CullModeForward: 2
     - _Cutoff: 0.5
-    - _DecalBlend: 0.22060111
+    - _DecalBlend: 0.25780842
     - _DecalColorMask0: 15
     - _DecalColorMask1: 0
     - _DecalColorMask2: 8
     - _DecalColorMask3: 8
-    - _DecalMaskMapBlueScale: 0.5
+    - _DecalMaskMapBlueScale: 0.361
     - _DecalMeshBiasType: 0
     - _DecalMeshDepthBias: 0
     - _DecalMeshViewBias: 0
@@ -264,7 +264,7 @@ Material:
     - _ZTestTransparent: 4
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 0.03196776, g: 0.88099146, b: 1, a: 1}
+    - _BaseColor: {r: 0.61391026, g: 1, b: 0.39598423, a: 1}
     - _BaseColorMap_MipInfo: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DiffusionProfileAsset: {r: 0, g: 0, b: 0, a: 0}

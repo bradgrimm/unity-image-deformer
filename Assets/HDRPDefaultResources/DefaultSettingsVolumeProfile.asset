@@ -27,7 +27,7 @@ MonoBehaviour:
     min: 0
     max: 1500
   minimumVelocity:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 2
     min: 0
     max: 64
@@ -680,19 +680,19 @@ MonoBehaviour:
     min: 0
     max: 1
   cascadeShadowSplitCount:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 4
     min: 1
     max: 4
   cascadeShadowSplit0:
-    m_OverrideState: 0
-    m_Value: 0.05
+    m_OverrideState: 1
+    m_Value: 0.006666667
   cascadeShadowSplit1:
-    m_OverrideState: 0
-    m_Value: 0.15
+    m_OverrideState: 1
+    m_Value: 0.02
   cascadeShadowSplit2:
-    m_OverrideState: 0
-    m_Value: 0.3
+    m_OverrideState: 1
+    m_Value: 0.04
   cascadeShadowBorder0:
     m_OverrideState: 1
     m_Value: 0.13333334
