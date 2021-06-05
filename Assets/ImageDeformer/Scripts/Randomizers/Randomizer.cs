@@ -9,4 +9,10 @@ public abstract class Randomizer : MonoBehaviour
 
     public abstract void Default();
     public abstract void Randomize();
+
+    public void ClearChildren()
+    {
+        for (int i = transform.childCount-1; i >= 0; i--)
+            GameObject.DestroyImmediate(transform.GetChild(i).gameObject);
+    }
 }

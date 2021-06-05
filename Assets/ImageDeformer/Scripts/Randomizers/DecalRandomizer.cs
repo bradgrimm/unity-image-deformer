@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
-using UnityEditor;
 
 [RequireComponent(typeof(DecalProjector))]
 public class DecalRandomizer : ComponentRandomizer<DecalProjector>
@@ -34,9 +33,7 @@ public class DecalRandomizer : ComponentRandomizer<DecalProjector>
 
     void SetMaterial(Material material)
     {
-        string[] guids = AssetDatabase.FindAssets("", new[] {"Assets/ImageDeformer/Textures/Flooring"});
-        string path = AssetDatabase.GUIDToAssetPath(guids[Random.Range(0, guids.Length - 1)]);
-        Texture texture = (Texture) AssetDatabase.LoadAssetAtPath<Texture>(path);
+        Texture texture = WorldData.Instance.RandomTexture();
         material.SetTexture("_BaseColorMap", texture);
     }
 }

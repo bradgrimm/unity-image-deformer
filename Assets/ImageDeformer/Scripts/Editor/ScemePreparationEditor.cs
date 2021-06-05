@@ -21,12 +21,11 @@ public class ScemePreparationEditor : Editor
 
         if (GUILayout.Button("Drop Legos"))
         {
-            (target as ScenePreparation).CreateModels();
-        }
-
-        if (GUILayout.Button("Set Material"))
-        {
-            (target as ScenePreparation).SetMaterial();
+            ModelsRandomizer[] randomizers = Object.FindObjectsOfType<ModelsRandomizer>();
+            foreach (ModelsRandomizer randomizer in randomizers)
+            {
+                randomizer.Randomize();
+            }
         }
     }
 }
