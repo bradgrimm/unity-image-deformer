@@ -46,8 +46,8 @@ public class ModelsRandomizer : Randomizer
         MeshRenderer[] meshRenderers = obj.GetComponentsInChildren<MeshRenderer>();
         foreach (MeshRenderer meshRenderer in meshRenderers)
         {
-            // meshRenderer.material = material;
-            meshRenderer.gameObject.AddComponent<ObjectAnnotator>();
+            ObjectAnnotator annotator = meshRenderer.gameObject.AddComponent<ObjectAnnotator>();
+            annotator.color = matColor;
             MeshCollider collider = meshRenderer.gameObject.AddComponent<MeshCollider>();
             collider.convex = true;
         }

@@ -27,5 +27,10 @@ public class ScemePreparationEditor : Editor
                 randomizer.Randomize();
             }
         }
+
+        if (GUILayout.Button("Save Scene"))
+        {
+            (target as ScenePreparation).SaveSceneToDisk();
+        }
     }
 }

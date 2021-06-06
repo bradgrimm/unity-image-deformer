@@ -5,14 +5,13 @@ using UnityEngine;
 public class ObjectAnnotator : MonoBehaviour
 {
     public bool showBounds = false;
+    public Color color;
 
     public void OnGUI()
     {
         if (showBounds) 
         {
-            Camera camera = Camera.main;
-            Mesh mesh = gameObject.GetComponent<MeshFilter>().mesh;
-            Rect rect = CalculateMeshBoundingBoxForCamera(camera, mesh);
+            Rect rect = CalculateBoundingBox();
             if (rect.height == 0 || rect.width == 0) return;
             UnityEditor.Handles.BeginGUI();
             UnityEditor.Handles.DrawSolidRectangleWithOutline(rect, Color.clear, Color.red);
@@ -20,9 +19,17 @@ public class ObjectAnnotator : MonoBehaviour
         }
     }
 
-    public Rect CalculateMeshBoundingBoxForCamera(Camera camera, Mesh mesh)
+    public Rect CalculateBoundingBox()
     {
-        Bounds bounds = gameObject.GetComponent<MeshCollider>().bounds;
+        Camera camera = Camera.main;
+        Mesh mesh = gameObject.GetComponent<MeshFilter>().mesh;
+        return CalculateBoundingBoxForCamera(camera, mesh);
+    }
+
+    public Rect CalculateBoundingBoxForCamera(Camera camera, Mesh mesh)
+    {
+        MeshCollider collider = gameObject.GetComponent<MeshCollider>();
+        Bounds bounds = collider.bounds;
         Vector3 center = bounds.center;
 
         if (camera.WorldToScreenPoint(center).z < 0)
@@ -46,6 +53,12 @@ public class ObjectAnnotator : MonoBehaviour
             min = Vector3.Min(min, w);
             max = Vector3.Max(max, w);
         }
-        return Rect.MinMaxRect(min.x, min.y, max.x, max.y);
+
+        Rect rect = Rect.MinMaxRect(min.x, min.y, max.x, max.y);
+        rect.xMin = Mathf.Clamp(rect.xMin, 0, Screen.width);
+        rect.xMax = Mathf.Clamp(rect.xMax, 0, Screen.width);
+        rect.yMin = Mathf.Clamp(rect.yMin, 0, Screen.height);
+        rect.yMax = Mathf.Clamp(rect.yMax, 0, Screen.height);
+        return rect;
     }
 }
