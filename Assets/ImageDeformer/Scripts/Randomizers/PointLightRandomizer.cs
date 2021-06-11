@@ -24,7 +24,7 @@ public class PointLightRandomizer : Randomizer
             lightObj.transform.position = startPoint;
             HDAdditionalLightData light = lightObj.AddHDLight(HDLightTypeAndShape.Point);
             light.intensity = Random.Range(intensityRange.x, intensityRange.y);
-            if (Random.value >= probOfWhite)
+            if (Random.value <= probOfWhite)
             {
                 float colorTemp = Random.Range(temperatureRange.x, temperatureRange.y);
                 light.SetColor(Color.white, colorTemp);

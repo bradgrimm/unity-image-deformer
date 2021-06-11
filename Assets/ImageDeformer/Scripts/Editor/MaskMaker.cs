@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using System.Collections;
+using Unity.EditorCoroutines.Editor;
+
 
 public class MaskMaker : EditorWindow {
 
@@ -52,6 +55,7 @@ public class MaskMaker : EditorWindow {
         if(!window)
             window = GetWindow(typeof(MaskMaker), false);
     }
+
     private void OnGUI()
     {
         if (window)
@@ -63,53 +67,7 @@ public class MaskMaker : EditorWindow {
 
         if(GUILayout.Button("Auto Generate"))
         {
-            string[] folderGuids = AssetDatabase.FindAssets("", new[] {"Assets/ImageDeformer/Textures/Flooring"});
-            for (int k = 0; k < folderGuids.Length; ++k)
-            {
-                string folderPath = AssetDatabase.GUIDToAssetPath(folderGuids[k]);
-                if (!folderPath.Contains("."))
-                {
-                    // Clear previous mask.
-                    Albedo = null;
-                    Normal = null;
-                    Smooth_Rough = null;
-                    Metallic = null;
-                    AmbientOcclusion = null;
-                    DetailMask = null;
-
-                    // Find new masks by name.
-                    string[] assetGuids = AssetDatabase.FindAssets("", new[] {folderPath});
-                    for (int i = 0; i < assetGuids.Length; ++i)
-                    {
-
-                        string path = AssetDatabase.GUIDToAssetPath(assetGuids[i]);
-                        Texture2D texture = (Texture2D) AssetDatabase.LoadAssetAtPath<Texture2D>(path);
-                        if (path.Contains("_Color"))
-                            Albedo = texture;
-                        else if (path.Contains("_Normal"))
-                            Normal = texture;
-                        else if (path.Contains("_Roughness"))
-                        {
-                            useRough = true;
-                            Smooth_Rough = texture;
-                        }
-                        else if (path.Contains("_Metal"))
-                            Metallic = texture;
-                        else if (path.Contains("Occlusion"))
-                            AmbientOcclusion = texture;
-                        else if (path.Contains("Detail"))
-                            DetailMask = texture;
-                    }
-
-                    // Save mask texture.
-                    string[] parts = folderPath.Split('/');
-                    string name = parts[parts.Length - 1];
-                    string outPath = folderPath + "/" + name.Replace("-JPG", "") + "_MASK.png";
-                    PackTextures(outPath);
-                }
-            }
-
-
+            EditorCoroutineUtility.StartCoroutine(GenerateForAllFlooringTextures(), this);
         }
 
         GUIStyle BigBold = new GUIStyle();
@@ -308,6 +266,56 @@ public class MaskMaker : EditorWindow {
             GUILayout.EndScrollView();
             GUILayout.EndVertical();
             GUILayout.EndArea();
+        }
+    }
+
+    public IEnumerator GenerateForAllFlooringTextures()
+    {
+        string[] folderGuids = AssetDatabase.FindAssets("", new[] { "Assets/ImageDeformer/Textures/Flooring" });
+        for (int k = 0; k < folderGuids.Length; ++k)
+        {
+            string folderPath = AssetDatabase.GUIDToAssetPath(folderGuids[k]);
+            if (!folderPath.Contains("."))
+            {
+                // Clear previous mask.
+                Albedo = null;
+                Normal = null;
+                Smooth_Rough = null;
+                Metallic = null;
+                AmbientOcclusion = null;
+                DetailMask = null;
+
+                // Find new masks by name.
+                string[] assetGuids = AssetDatabase.FindAssets("", new[] { folderPath });
+                for (int i = 0; i < assetGuids.Length; ++i)
+                {
+                    string path = AssetDatabase.GUIDToAssetPath(assetGuids[i]);
+                    Texture2D texture = (Texture2D)AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+                    if (path.Contains("_Color"))
+                        Albedo = texture;
+                    else if (path.Contains("_Normal"))
+                        Normal = texture;
+                    else if (path.Contains("_Roughness"))
+                    {
+                        useRough = true;
+                        Smooth_Rough = texture;
+                    }
+                    else if (path.Contains("_Metal"))
+                        Metallic = texture;
+                    else if (path.Contains("Occlusion"))
+                        AmbientOcclusion = texture;
+                    else if (path.Contains("Detail"))
+                        DetailMask = texture;
+                }
+
+                // Save mask texture.
+                string[] parts = folderPath.Split('/');
+                string name = parts[parts.Length - 1];
+                string outPath = folderPath + "/" + name.Replace("-JPG", "") + "_MASK.png";
+                PackTextures(outPath);
+
+                yield return null;
+            }
         }
     }
 
