@@ -17,4 +17,12 @@ public class ExposureRandomizer : VolumeParameterRandomizer<Exposure>
         float amt = Random.Range(exposureRange.x, exposureRange.y);
         exposure.fixedExposure.value = amt;
     }
+
+    public override void Default()
+    {
+        Exposure exposure = GetVolumeParameter();
+        exposure.active = true;
+        exposure.mode.value = ExposureMode.Fixed;
+        exposure.fixedExposure.value = 0.0f;
+    }
 }

@@ -41,7 +41,7 @@ public class WorldDataEditor : Editor
 
     public void RefreshModels(WorldData worldData)
     {
-        string[] guids = AssetDatabase.FindAssets("", new[] {"Assets/ImageDeformer/Models"});
+        string[] guids = AssetDatabase.FindAssets("", new[] {"Assets/ImageDeformer/Models/First30"});
         List<GameObject> models = new List<GameObject>();
         for (int i = 0; i < guids.Length; ++i)
         {

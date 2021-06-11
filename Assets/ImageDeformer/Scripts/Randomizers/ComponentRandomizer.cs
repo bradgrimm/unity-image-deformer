@@ -5,16 +5,20 @@ using UnityEngine.Rendering;
 
 public abstract class ComponentRandomizer<T> : Randomizer
 {
+    public bool disableObjectOnDefault = false;
+    
     T component;
 
     public override void Default()
     {
-        gameObject.SetActive(false);
+        if (disableObjectOnDefault)
+            gameObject.SetActive(false);
     }
 
     public override void Randomize()
     {
-        gameObject.SetActive(true);
+        if (disableObjectOnDefault)
+            gameObject.SetActive(true);
     }
 
     public T GetComponent()

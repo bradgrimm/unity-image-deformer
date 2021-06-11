@@ -79,3 +79,6 @@ crashlytics-build.properties
 
 # Python Env
 venv/
+
+# Results
+Output/

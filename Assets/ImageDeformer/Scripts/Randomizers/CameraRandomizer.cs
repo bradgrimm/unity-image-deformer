@@ -36,6 +36,11 @@ public class CameraRandomizer : ComponentRandomizer<Camera>
         camera.transform.position = cameraPosition;
     }
 
+    public override void Default()
+    {
+        Randomize();
+    }
+
     public void PickRandomObjectToLookAt()
     {
         int childCount = parentForCreatedObjects.childCount;

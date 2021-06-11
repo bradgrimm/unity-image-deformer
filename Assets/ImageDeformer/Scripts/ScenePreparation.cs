@@ -15,10 +15,8 @@ public class ScenePreparation : MonoBehaviour
 
     void InitRandomizers()
     {
-        //if (randomizers.Length == 0)
-        //{
-        randomizers = Resources.FindObjectsOfTypeAll<Randomizer>();
-        //}
+        if (randomizers.Length == 0)
+            randomizers = Resources.FindObjectsOfTypeAll<Randomizer>();
     }
 
     public void GenerateScene()
@@ -41,7 +39,7 @@ public class ScenePreparation : MonoBehaviour
         }
     }
 
-    public void SaveSceneToDisk()
+    public void SaveSceneToDisk(string subDir="")
     {
         MaterialPropertyBlock properties = new MaterialPropertyBlock();
         ObjectAnnotator[] annotators = Resources.FindObjectsOfTypeAll<ObjectAnnotator>();
@@ -70,9 +68,10 @@ public class ScenePreparation : MonoBehaviour
                 visibleObjects.Add(obj);
             }
         }
-        Directory.CreateDirectory("Output/");
+        string path = "Output/" + subDir + "/";
+        Directory.CreateDirectory(path);
         string guid = (string) System.Guid.NewGuid().ToString();
-        CsvUtil.SaveObjects<YoloObject>(visibleObjects, "Output/" + guid + ".csv");
-        ScreenCapture.CaptureScreenshot("Output/" + guid + ".png");
+        CsvUtil.SaveObjects<YoloObject>(visibleObjects, path + guid + ".csv");
+        ScreenCapture.CaptureScreenshot(path + guid + ".png");
     }
 }

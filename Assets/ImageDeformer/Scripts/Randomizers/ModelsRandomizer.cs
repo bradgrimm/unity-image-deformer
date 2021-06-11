@@ -20,7 +20,9 @@ public class ModelsRandomizer : Randomizer
 
     public override void Default()
     {
-        // Just leave the scene as is.
+        // Just leave the scene as is unless there isn't anything there.
+        if (transform.childCount == 0)
+            Randomize();
     }
 
     public void CreateSingleModel()

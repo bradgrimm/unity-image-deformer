@@ -13,6 +13,7 @@ public class LensDistortionRandomizer : VolumeParameterRandomizer<LensDistortion
     {
         LensDistortion distort = GetVolumeParameter();
         distort.active = true;
+        distort.intensity.overrideState = true;
         distort.intensity.value = Random.Range(intensityRange.x, intensityRange.y);
     }
 }
