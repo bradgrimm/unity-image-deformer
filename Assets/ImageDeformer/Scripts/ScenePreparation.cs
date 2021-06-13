@@ -44,6 +44,9 @@ public class ScenePreparation : MonoBehaviour
         MaterialPropertyBlock properties = new MaterialPropertyBlock();
         ObjectAnnotator[] annotators = Resources.FindObjectsOfTypeAll<ObjectAnnotator>();
         List<YoloObject> visibleObjects = new List<YoloObject>();
+        Camera camera = Camera.main;
+        float width = camera.pixelWidth;
+        float height = camera.pixelHeight;
         foreach (ObjectAnnotator annotator in annotators)
         {
             Rect rect = annotator.CalculateBoundingBox();
@@ -56,11 +59,11 @@ public class ScenePreparation : MonoBehaviour
                 string name = annotator.name == "default"
                     ? annotator.transform.parent.name
                     : annotator.name;
-                obj.id = name;
-                obj.x = rect.x / Screen.width;
-                obj.y = rect.y / Screen.height;
-                obj.w = rect.width / Screen.width;
-                obj.h = rect.height / Screen.height;
+                obj.id = name.Replace("(Clone)", "");
+                obj.x = rect.x / width;
+                obj.y = rect.y / height;
+                obj.w = rect.width / width;
+                obj.h = rect.height / height;
                 obj.r = color.r;
                 obj.g = color.g;
                 obj.b = color.b;

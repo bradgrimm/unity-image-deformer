@@ -7,6 +7,7 @@ public class ModelsRandomizer : Randomizer
     public BoxCollider visibleRegion;
     public Vector2 legoDensityRange = new Vector2(0.25f, 2.0f);
     public Vector2 smoothnessRange = new Vector2(0.0f, 1.0f);
+    public bool showAnnotations = false;
 
     private float objScale = 1.0f;
 
@@ -50,6 +51,7 @@ public class ModelsRandomizer : Randomizer
         {
             ObjectAnnotator annotator = meshRenderer.gameObject.AddComponent<ObjectAnnotator>();
             annotator.color = matColor;
+            annotator.showBounds = showAnnotations;
             MeshCollider collider = meshRenderer.gameObject.AddComponent<MeshCollider>();
             collider.convex = true;
         }

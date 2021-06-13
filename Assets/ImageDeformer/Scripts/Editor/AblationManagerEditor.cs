@@ -12,12 +12,12 @@ public class AblationManagerEditor : Editor
 
         AblationManager ablationManager = target as AblationManager;
         if (GUILayout.Button("Step"))
-            ablationManager.isSingleShot = true;
+            ablationManager.Step();
 
         if (GUILayout.Button("Run"))
-            ablationManager.isRunning = true;
+            ablationManager.Run();
 
         if (GUILayout.Button("Stop"))
-            ablationManager.isRunning = false;
+            ablationManager.Stop();
     }
 }

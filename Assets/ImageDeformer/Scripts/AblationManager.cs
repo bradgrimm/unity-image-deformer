@@ -5,13 +5,14 @@ using UnityEngine;
 [RequireComponent(typeof(ScenePreparation))]
 public class AblationManager : MonoBehaviour
 {
-    public bool isRunning = false;
-    public bool isSingleShot = false;
+    public bool allButOne = true;
     public int shotsPerRandomizer = 2;
     public int waitFramesForSceneToSettle = 10;
     IEnumerator randomizerEnumerator;
     ScenePreparation scenePreparation;
 
+    private bool isRunning = false;
+    private bool isSingleShot = false;
     private int currentPhotoCount = 0;
     private int totalPhotoCount = 0;
     private int waitingFrames = 0;
@@ -29,11 +30,11 @@ public class AblationManager : MonoBehaviour
 
     void Start()
     {
+        Stop();
+
         if (!Application.isEditor)
-            isRunning = true;
-        totalPhotoCount = currentPhotoCount = 0;
-        waitingFrames = 0;
-        randomizerEnumerator = SingleRandomizer();
+            Run();
+        
         scenePreparation = GetComponent<ScenePreparation>();
     }
 
@@ -70,6 +71,30 @@ public class AblationManager : MonoBehaviour
         }
     }
 
+    IEnumerator AllButOneRandomizer()
+    {
+        Randomizer[] randomizers = FindRandomizers();
+        foreach (Randomizer randomizer in randomizers)
+        {
+            if (randomizer.includeInAblations)
+                randomizer.triggerEnabled = true;
+        }
+        
+        foreach (Randomizer randomizer in randomizers)
+        {
+            if (randomizer.includeInAblations)
+            {
+                string name = randomizer.GetType().Name;
+                subDirName = name.Replace("Randomizer", "");
+                Debug.Log("Removing ablation: " + name);
+                float prevChange = randomizer.triggerChance;
+                randomizer.triggerEnabled = false;
+                yield return 0;
+                randomizer.triggerEnabled = true;
+            }
+        }
+    }
+
     void Update()
     {
         if (!isRunning && !isSingleShot)
@@ -100,5 +125,24 @@ public class AblationManager : MonoBehaviour
                 isSingleShot = false;
                 break;
         }
+    }
+
+    public void Step()
+    {
+        isSingleShot = true;
+    }
+
+    public void Run()
+    {
+        Stop();
+        isRunning = true;
+    }
+
+    public void Stop()
+    {
+        isRunning = false;
+        totalPhotoCount = currentPhotoCount = waitingFrames = 0;
+        randomizerEnumerator = allButOne ? AllButOneRandomizer() : SingleRandomizer();
+        state = State.SetupRandomizers;
     }
 }
