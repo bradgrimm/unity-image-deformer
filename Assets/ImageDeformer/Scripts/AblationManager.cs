@@ -1,3 +1,4 @@
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -109,8 +110,12 @@ public class AblationManager : MonoBehaviour
         switch (state)
         {
             case State.SetupRandomizers:
-                state = randomizerEnumerator.MoveNext() ? State.SetupScene : State.Complete;
-                currentPhotoCount = 0;
+                bool isDone = !randomizerEnumerator.MoveNext();
+                bool needsMore = currentPhotoCount < shotsPerRandomizer;
+                currentPhotoCount = CountFiles(subDirName);
+                state = isDone ? State.Complete : (needsMore ? State.SetupScene : State.SetupRandomizers);
+                if (currentPhotoCount > 0)
+                    Debug.Log("Found existing photo count: " + currentPhotoCount);
                 break;
             case State.SetupScene:
                 scenePreparation.GenerateScene();
@@ -144,5 +149,13 @@ public class AblationManager : MonoBehaviour
         totalPhotoCount = currentPhotoCount = waitingFrames = 0;
         randomizerEnumerator = allButOne ? AllButOneRandomizer() : SingleRandomizer();
         state = State.SetupRandomizers;
+    }
+
+    public int CountFiles(string name)
+    {
+        string path = "Output/" + name;
+        if (!Directory.Exists(path))
+            return 0;
+        return Directory.GetFiles(path, "*.png", SearchOption.AllDirectories).Length;
     }
 }

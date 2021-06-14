@@ -5,6 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(Renderer))]
 public class MaterialRandomizer : ComponentRandomizer<Renderer>
 {
+    private bool madeChanges = false;
+
     public override void Randomize()
     {
         Material material = GetComponent().material;
@@ -32,5 +34,12 @@ public class MaterialRandomizer : ComponentRandomizer<Renderer>
             else if (name.Contains("_emi"))
                 material.SetTexture("_EmissiveColorMap", textures[i]);
         }
+        madeChanges = true;
+    }
+
+    public void OnDestroy()
+    {
+        if (madeChanges)
+            Destroy(GetComponent().material);
     }
 }

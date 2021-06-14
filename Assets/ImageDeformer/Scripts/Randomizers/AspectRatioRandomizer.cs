@@ -85,10 +85,6 @@ public class AspectRatioRandomizer : Randomizer
         var ctor = gvsType.GetConstructor(new Type[] { gameViewSizeType, typeof(int), typeof(int), typeof(string) });
         var fixedResolution = Enum.Parse(gameViewSizeType, "FixedResolution");
 
-        Debug.Log(fixedResolution);
-        Debug.Log(width);
-        Debug.Log(height);
-        Debug.Log(text);
         var newSize = ctor.Invoke(new object[] { fixedResolution, width, height, text });
         addCustomSize.Invoke(group, new object[] { newSize });
     }
