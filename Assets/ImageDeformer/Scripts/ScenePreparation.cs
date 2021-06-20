@@ -60,10 +60,12 @@ public class ScenePreparation : MonoBehaviour
                     ? annotator.transform.parent.name
                     : annotator.name;
                 obj.id = name.Replace("(Clone)", "");
-                obj.x = rect.x / width;
-                obj.y = rect.y / height;
-                obj.w = rect.width / width;
-                obj.h = rect.height / height;
+                float sw = rect.width / width;
+                float sh = rect.height / height;
+                obj.x = (rect.x / width) + (sw / 2);
+                obj.y = (rect.y / height) + (sh / 2);
+                obj.w = sw;
+                obj.h = sh;
                 obj.r = color.r;
                 obj.g = color.g;
                 obj.b = color.b;
