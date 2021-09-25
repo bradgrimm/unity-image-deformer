@@ -23,8 +23,6 @@ def search_for_textures(categories):
     print('Searching for ambientcg textures.')
     textures = set()
     for category in tqdm(categories):
-        if len(textures) >= 15:
-            break
         status, response = http.request(f'https://ambientcg.com/{category}')
         for link in BeautifulSoup(response, parse_only=SoupStrainer('a')):
             if link.has_attr('href') and './view?id' in link['href'] and 'Substance' not in link['href']:
@@ -36,8 +34,6 @@ def search_for_downloadable_zip_files(textures, resolution='4K'):
     print('Searching for ambientcg downloadable zip files.')
     downloads = set()
     for texture in tqdm(textures):
-        if len(downloads) >= 15:
-            break
         status, response = http.request(f'https://ambientcg.com/{texture}')
         for link in BeautifulSoup(response, parse_only=SoupStrainer('a')):
             if link.has_attr('href'):
